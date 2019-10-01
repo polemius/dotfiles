@@ -1,103 +1,83 @@
+filetype plugin indent on
+set encoding=utf-8
+set nocompatible
+syntax enable
+set noswapfile
+let mapleader=" "
+set number relativenumber
+set wrap linebreak nolist
+set textwidth=160
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=2
+set updatetime=300
+" set signcolumn=yes
+set guifont=Fura\ Code\ Light\ Nerd\ Font\ Complete:h16
 
-call plug#begin('~/.vim/plugged')
+" cursor
+let &t_SI.="\e[5 q"
+let &t_SR.="\e[3 q" 
+let &t_EI.="\e[1 q"
 
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'mattn/emmet-vim'
-Plug 'valloric/youcompleteme'
-Plug 'jiangmiao/auto-pairs'
-Plug 'kien/ctrlp.vim'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-commentary'
-Plug 'pangloss/vim-javascript'
-Plug 'isRuslan/vim-es6'
-Plug 'mxw/vim-jsx'
+if empty(glob('~/.vim/autoload/plug.vim'))
+	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim 
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
-" Color themes
-Plug 'morhetz/gruvbox'
-Plug 'rakr/vim-one'
-Plug 'yorickpeterse/happy_hacking.vim'
-Plug 'kristijanhusak/vim-hybrid-material'
+call plug#begin('~/.vim/bundle')
+Plug 'scrooloose/nerdtree'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'leafgarland/typescript-vim'
+Plug 'ianks/vim-tsx'
 Plug 'NLKNguyen/papercolor-theme'
-
+Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 call plug#end()
 
-let g:ctrlp_working_path_mode = 'ar'
-let g:ctrlp_custom_ignore = '\v[\/](\.git|\.hg|\.svn|node_modules)$'
-let g:javascript_plugin_jsdoc = 1
+colorscheme papercolor
 
-augroup javascript_folding
-    au!
-    au FileType javascript setlocal foldmethod=syntax
-augroup END
+" COC
+let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier']
+" Use `[g` and `]g` to navigate diagnostics
+nmap <leader>rn <Plug>(coc-rename)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-set autoread
-set termguicolors
-syntax enable
-" set cursorline
-set t_Co=256
-set relativenumber
-set number
-set background=dark
-colorscheme PaperColor
-" let g:airline_theme = 'one'
-" let g:deoplete#enable_at_startup = 1
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
-set expandtab
-set smartindent
-set copyindent
-set guifont=Fira\ Code:h12
+" Remap ESC
+inoremap jj <Esc>
+inoremap <Esc> <NOP>
 
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
+" Reload vim
+nnoremap <leader>sv :source ~/.vimrc<CR>
 
+" Buffers
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>h :History<CR>
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprevious<CR>
 
-map <C-d> :NERDTreeToggle<CR>
-map <C-h> :call WinCmd('h')<CR>
-map <C-j> :call WinCmd('j')<CR>
-map <C-k> :call WinCmd('k')<CR>
-map <C-l> :call WinCmd('l')<CR>
-map <C-n> :tabnew<CR>
-map <C-w> :tabclose<CR>
-map <C-u> :call TabMove('u')<CR>
-map <C-i> :call TabMove('i')<CR>
-noremap <C-s-up> ddkP
-noremap <C-s-down> ddp
+" Find
+nnoremap <leader>f :FZF<CR>
 
-" No annoying sound on errors
-set noerrorbells
-set novisualbell
-set t_vb=
-set tm=500
+" NERDTree
+map <leader>m :NERDTreeFind<CR>
+map <leader>n :NERDTreeToggle<CR>
 
-function! WinCmd(key)
-  let t:curwin = winnr()
-  exec "wincmd ".a:key
-  if (t:curwin == winnr())
-    if(match (a:key, '[jk]'))
-      wincmd v
-    else
-      wincmd s
-    endif
-    exec "wincmd ".a:key
-  endif
-endfunction
+" vim-airline
+let g:airline_powerline_fonts = 1 
+let g:airline#extensions#keymap#enabled = 0
+let g:airline_section_z = "\ue0a1:%l/%L Col:%c"
+let g:Powerline_symbols='unicode'
+let g:airline#extensions#xkblayout#enabled = 0 
 
-function! TabMove(key)
-  let t:curtab = tabpagenr()
-  let t:diff = 0
-  if (a:key == 'u')
-    let t:diff = -1
-  elseif (a:key == 'i')
-    let t:diff = 1
-  endif
-  let t:nexttab = t:curtab + t:diff
-  echo t:diff
-  if (t:nexttab != 0) 
-    exec "tabn ".t:nexttab
-  endif
-endfunction
+" typescript
+au BufNewFile,BufRead *.ts setlocal filetype=typescript
+au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
 
