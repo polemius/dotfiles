@@ -1,0 +1,25 @@
+[core]
+    editor = vim
+    pager = /usr/local/Cellar/git/2.23.0_1/share/git-core/contrib/diff-highlight/diff-highlight | less -XRF
+[color]
+    ui = true
+[color "diff"]
+    meat = yellow
+    frag = magenta
+    old = red
+    new = green
+    whitespace = red
+[color "status"]
+    added = green
+    changed = yellow reverse
+    untracked = red reverse
+[color "branch"]
+    current = yellow reverse
+    local = green
+    remote = cyan
+[alias]
+    lg = log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short -n5
+    st = status
+    ap = add -p
+    a = add
+
